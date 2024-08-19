@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { COLORS } from "../../styles/constants";
 
-export default function ContactStack() {
+export default function SearchStack() {
   return (
     <Stack
       screenOptions={{
@@ -19,9 +19,9 @@ export default function ContactStack() {
       }}
     >
       <Stack.Screen
-        name="contact"
+        name="index"
         options={{
-          title: "Contact",
+          title: "Search",
         }}
       />
     </Stack>
