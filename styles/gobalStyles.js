@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "./constants";
+import { FONTS } from "./constants";
 
 export const globalStyles = StyleSheet.create({
   pageContainer: {
@@ -7,20 +8,30 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  paragraph: {
-    fontSize: 18,
-    color: COLORS.text,
-  },
+
   heading: {
     fontSize: 32,
-    color: COLORS.primary,
+    color: COLORS.secondary,
   },
-  buttonContainer: {
-    padding: 8,
-    backgroundColor: COLORS.primary,
+
+  button: {
+    paddingHorizontal: 20,
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.secondary,
+    borderWidth: 1,
     borderRadius: 6,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
-    color: COLORS.text,
+    color: COLORS.background,
+    fontSize: 16,
+  },
+  paragraph: {
+    fontFamily: FONTS.default.regular,
+    fontSize: 18,
+    marginTop: 25,
+    marginHorizontal: 20,
   },
 });
