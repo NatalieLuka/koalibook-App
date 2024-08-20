@@ -1,59 +1,67 @@
-import { StyleSheet, Pressable, View, Text } from "react-native";
-import { globalStyles } from "../styles/gobalStyles";
-import { Link, router, Slot, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { COLORS } from "../styles/constants";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { UserProvider } from "../context/UserContext";
+import { usePathname } from "expo-router";
 
 export default function RootLayout() {
+  const pathname = usePathname();
+  console.log("pathname", pathname);
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: COLORS.secondary,
-        tabBarInactiveTintColor: COLORS.background,
-        tabBarStyle: {
-          backgroundColor: COLORS.menue,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="(home)"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => {
-            return <FontAwesome5 name="home" size={24} color={color} />;
+    <UserProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: COLORS.background,
+          tabBarStyle: {
+            backgroundColor: COLORS.secondary,
           },
-        }}
-      />
-      <Tabs.Screen
-        name="(books)"
-        options={{
-          title: "My Books",
-          tabBarIcon: ({ color }) => {
-            return <FontAwesome5 name="book-open" size={24} color={color} />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="(search)"
-        options={{
-          title: "Search",
-          tabBarIcon: ({ color }) => {
-            return <FontAwesome name="search" size={24} color={color} />;
-          },
-        }}
-      />
+          tabBarIcon: () => {
+            // console.log("route", route);
+            const iconColor =
+              pathname === "/" ? COLORS.primary : COLORS.background;
 
-      <Tabs.Screen
-        name="(profile)"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => {
-            return <FontAwesome5 name="user-alt" size={24} color={color} />;
+            return <FontAwesome5 name="home" size={24} color={iconColor} />;
           },
         }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen name="(home)" options={{ href: null }} />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+          }}
+        />
+        <Tabs.Screen
+          name="books"
+          options={{
+            title: "My Books",
+            tabBarIcon: ({ color }) => {
+              return <FontAwesome5 name="book-open" size={24} color={color} />;
+            },
+          }}
+        />
+        <Tabs.Screen
+          name="search"
+          options={{
+            title: "Search",
+            tabBarIcon: ({ color }) => {
+              return <FontAwesome name="search" size={24} color={color} />;
+            },
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: ({ color }) => {
+              return <FontAwesome5 name="user-alt" size={24} color={color} />;
+            },
+          }}
+        />
+      </Tabs>
+    </UserProvider>
   );
 }
