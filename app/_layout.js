@@ -2,8 +2,11 @@ import { Tabs } from "expo-router";
 import { COLORS } from "../styles/constants";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { UserProvider } from "../context/UserContext";
+import { usePathname } from "expo-router";
 
 export default function RootLayout() {
+  const pathname = usePathname();
+  console.log("pathname", pathname);
   return (
     <UserProvider>
       <Tabs
@@ -14,19 +17,24 @@ export default function RootLayout() {
           tabBarStyle: {
             backgroundColor: COLORS.secondary,
           },
+          tabBarIcon: () => {
+            // console.log("route", route);
+            const iconColor =
+              pathname === "/" ? COLORS.primary : COLORS.background;
+
+            return <FontAwesome5 name="home" size={24} color={iconColor} />;
+          },
         }}
       >
+        <Tabs.Screen name="(home)" options={{ href: null }} />
         <Tabs.Screen
-          name="(home)"
+          name="index"
           options={{
             title: "Home",
-            tabBarIcon: ({ color }) => {
-              return <FontAwesome5 name="home" size={24} color={color} />;
-            },
           }}
         />
         <Tabs.Screen
-          name="(books)"
+          name="books"
           options={{
             title: "My Books",
             tabBarIcon: ({ color }) => {
@@ -35,7 +43,7 @@ export default function RootLayout() {
           }}
         />
         <Tabs.Screen
-          name="(search)"
+          name="search"
           options={{
             title: "Search",
             tabBarIcon: ({ color }) => {
@@ -45,7 +53,7 @@ export default function RootLayout() {
         />
 
         <Tabs.Screen
-          name="(profile)"
+          name="profile"
           options={{
             title: "Profile",
             tabBarIcon: ({ color }) => {
