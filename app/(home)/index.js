@@ -1,14 +1,37 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
 import { useState } from "react";
-import { useUser } from "../../context/UserContext";
-import { globalStyles } from "../../styles/gobalStyles";
+import { globalStyles } from "../../styles/globalStyles";
 import { COLORS } from "../../styles/constants";
 import { FONTS } from "../../styles/constants";
+import { useSignIn, useAuth } from "@clerk/clerk-expo";
 
 export default function HomePage() {
-  const [name, setName] = useState("");
+  const { signIn, setActive, isLoaded } = useSignIn();
+
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useUser();
+
+  async function handleSubmit() {
+    if (!isLoaded) {
+      return;
+    }
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: email,
+        password,
+      });
+
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        // router.replace("/");
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2));
+      }
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+    }
+  }
 
   return (
     <>
@@ -17,11 +40,11 @@ export default function HomePage() {
       </View>
       <View style={styles.loginContainer}>
         <TextInput
-          placeholder="Name"
+          placeholder="E-mail"
           autoCapitalize="none"
-          value={name}
+          value={email}
           onChangeText={(text) => {
-            setName(text);
+            setEmail(text);
           }}
           style={styles.textInput}
         />
@@ -37,16 +60,13 @@ export default function HomePage() {
         />
 
         <Pressable
-          title="Login"
           style={({ pressed }) => [
             globalStyles.button,
             {
               backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
             },
           ]}
-          onPress={() => {
-            login(name);
-          }}
+          onPress={handleSubmit}
         >
           <Text style={globalStyles.buttonText}>Login</Text>
         </Pressable>

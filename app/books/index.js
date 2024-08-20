@@ -1,14 +1,16 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
-import { globalStyles } from "../../styles/gobalStyles";
-import { useUser } from "../../context/UserContext";
+import { globalStyles } from "../../styles/globalStyles";
+import { useUser } from "@clerk/clerk-expo";
+import { COLORS } from "../../styles/constants";
 
 export default function BooksPage() {
   const { user } = useUser();
+
   return (
     <>
       <Text style={globalStyles.heading}>I am the books page</Text>
-      <Text>Hello {user}</Text>
+      <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
     </>
   );
 }
