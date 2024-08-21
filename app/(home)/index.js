@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { globalStyles } from "../../styles/globalStyles";
 import { COLORS } from "../../styles/constants";
 import { FONTS } from "../../styles/constants";

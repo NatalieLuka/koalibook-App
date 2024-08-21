@@ -47,12 +47,11 @@ function TabNavigation() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.background, //    pathname === "/" ? COLORS.primary : COLORS.background;
+        tabBarInactiveTintColor: COLORS.background,
         tabBarStyle: {
           backgroundColor: COLORS.secondary,
         },
         tabBarIcon: () => {
-          // console.log("route", route);
           const iconColor =
             pathname === "/" ? COLORS.primary : COLORS.background;
 
@@ -81,6 +80,7 @@ function TabNavigation() {
       <Tabs.Screen
         name="search"
         options={{
+          href: user ? "/search" : null,
           title: "Search",
           tabBarIcon: ({ color }) => {
             return <FontAwesome name="search" size={24} color={color} />;
@@ -91,6 +91,7 @@ function TabNavigation() {
       <Tabs.Screen
         name="profile"
         options={{
+          href: user ? "/profile" : null,
           title: "Profile",
           tabBarIcon: ({ color }) => {
             return <FontAwesome5 name="user-alt" size={24} color={color} />;
