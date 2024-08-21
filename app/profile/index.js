@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { Link } from "expo-router";
-import { globalStyles } from "../../styles/gobalStyles";
+import { globalStyles } from "../../styles/globalStyles";
 
 export default function ProfilePage() {
   return (
