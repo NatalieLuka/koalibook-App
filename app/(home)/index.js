@@ -4,6 +4,7 @@ import { globalStyles } from "../../styles/globalStyles";
 import { COLORS } from "../../styles/constants";
 import { FONTS } from "../../styles/constants";
 import { useSignIn, useAuth } from "@clerk/clerk-expo";
+import { router } from "expo-router";
 
 export default function HomePage() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -24,7 +25,9 @@ export default function HomePage() {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        // router.replace("/");
+        setEmail("");
+        setPassword("");
+        router.push("/profile");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
