@@ -2,8 +2,8 @@ import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
 import { useState, useEffect } from "react";
 import { globalStyles } from "../../styles/globalStyles";
 import { COLORS } from "../../styles/constants";
-import { FONTS } from "../../styles/constants";
-import { useSignIn, useAuth } from "@clerk/clerk-expo";
+// import { FONTS } from "../../styles/constants";
+import { useSignIn } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 
 export default function HomePage() {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 6,
     padding: 8,
-    fontFamily: FONTS.default.regular,
+    // fontFamily: FONTS.default.regular,
     fontSize: 18,
     backgroundColor: "white",
   },

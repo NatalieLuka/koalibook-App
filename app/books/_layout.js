@@ -24,6 +24,12 @@ export default function BooksStack() {
           title: "Books",
         }}
       />
+      <Stack.Screen
+        name="[bookid]/index"
+        options={{
+          title: "Book Details",
+        }}
+      />
     </Stack>
   );
 }

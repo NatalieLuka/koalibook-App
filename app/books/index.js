@@ -11,6 +11,18 @@ export default function BooksPage() {
     <>
       <Text style={globalStyles.heading}>I am the books page</Text>
       <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
+      <Pressable
+        style={({ pressed }) => [
+          globalStyles.button,
+          {
+            backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
+          },
+        ]}
+      >
+        <Link href="/books/scanner">
+          <Text style={globalStyles.buttonText}>Buch hinzufügen</Text>
+        </Link>
+      </Pressable>
     </>
   );
 }
