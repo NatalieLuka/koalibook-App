@@ -15,7 +15,6 @@ export default function CameraPage() {
   const { user } = useUser();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return (
       <View>
         <Text>Loading...</Text>
@@ -23,7 +22,6 @@ export default function CameraPage() {
     );
   }
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text>We need your permission to show the camera</Text>
@@ -40,9 +38,6 @@ export default function CameraPage() {
         <CameraView
           onBarcodeScanned={(scanningResult) => {
             if (activeScanner) {
-              console.log("Barcode scanned");
-              console.log("Barcode type", scanningResult.type);
-              console.log("Barcode data", scanningResult.data);
               setIsbn(scanningResult.data);
               setActiveScanner(false);
             }

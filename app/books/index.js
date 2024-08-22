@@ -1,17 +1,18 @@
 import { View, Text, Pressable } from "react-native";
-import { Link } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
 import { useUser } from "@clerk/clerk-expo";
 import { COLORS } from "../../styles/constants";
+import { router } from "expo-router";
 
 export default function BooksPage() {
   const { user } = useUser();
 
   return (
     <>
-      <Text style={globalStyles.heading}>I am the books page</Text>
+      <Text style={globalStyles.heading}>I am the books page 📚</Text>
       <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
       <Pressable
+        onPress={() => router.push("/books/scanner")}
         style={({ pressed }) => [
           globalStyles.button,
           {
@@ -19,9 +20,7 @@ export default function BooksPage() {
           },
         ]}
       >
-        <Link href="/books/scanner">
-          <Text style={globalStyles.buttonText}>Buch hinzufügen</Text>
-        </Link>
+        <Text style={globalStyles.buttonText}>Add new Book</Text>
       </Pressable>
     </>
   );
