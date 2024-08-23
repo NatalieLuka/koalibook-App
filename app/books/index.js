@@ -14,9 +14,8 @@ const renderItem = ({ item }) => {
     <View style={styles.item}>
       <Text style={globalStyles.paragraph}>{item.title}</Text>
       <Text style={globalStyles.paragraph}>{item.author}</Text>
-      {/* <Image source={item.coverImage} style={styles.image} /> */}
-      <Link style={globalStyles.paragraph} href={`${item.isbn}`}>
-        View more details
+      <Link style={globalStyles.paragraph} href={`/books/${item.isbn}`}>
+        View more details {item.isbn}
       </Link>
     </View>
   );
@@ -46,7 +45,6 @@ export default function BooksPage() {
           }
 
           const data = await response.json();
-          console.log(data);
           setBooks(data);
         } catch (error) {
           console.log("Error loading books:", error);
@@ -54,10 +52,8 @@ export default function BooksPage() {
           setIsLoading(false);
         }
       }
-
-      console.log("useFocusEffect called");
       loadData();
-    }, [getToken]) // Abhängigkeit sicherstellen
+    }, [getToken])
   );
 
   return (

@@ -8,7 +8,6 @@ export default function ProfilePage() {
 
   async function handleGetToken() {
     const token = await getToken();
-    console.log(token);
   }
 
   return (
