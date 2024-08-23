@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "./constants";
-import { FONTS } from "./constants";
+// import { FONTS } from "./constants";
 
 export const globalStyles = StyleSheet.create({
   pageContainer: {
@@ -29,7 +29,7 @@ export const globalStyles = StyleSheet.create({
     fontSize: 16,
   },
   paragraph: {
-    fontFamily: FONTS.default.regular,
+    // fontFamily: FONTS.default.regular,
     fontSize: 18,
     marginTop: 25,
     marginHorizontal: 20,

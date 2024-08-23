@@ -1,6 +1,6 @@
 import { COLORS } from "../../styles/constants";
 import { useAuth } from "@clerk/clerk-expo";
-import { View, Text, Pressable } from "react-native";
+import { Text, Pressable } from "react-native";
 import { globalStyles } from "../../styles/globalStyles";
 import { Stack, router } from "expo-router";
 
