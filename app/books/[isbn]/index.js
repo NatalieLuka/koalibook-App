@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Scrollview, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "../../../styles/globalStyles";
 import { useAuth } from "@clerk/clerk-expo";
 import { COLORS } from "../../../styles/constants";
+import { Image } from "expo-image";
 
 const API = "http://localhost:3000/books";
 
@@ -55,21 +56,30 @@ export default function BookDetailPage() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <Text style={globalStyles.heading}>{book.title}</Text>
-        <Text style={globalStyles.paragraph}>Author: {book.author}</Text>
-        <Text style={globalStyles.paragraph}>
-          Description: {book.description}
-        </Text>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <Text style={globalStyles.heading}>{book.title}</Text>
+          <Text style={globalStyles.paragraph}>{book.author}</Text>
+          <Image style={styles.image} source={book.image}></Image>
+
+          <Text style={globalStyles.paragraph}>{book.description}</Text>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
+  scrollViewContent: {
+    paddingTop: 10,
     backgroundColor: COLORS.background,
+    alignItems: "center",
+    paddingBottom: 50,
+    gap: 10,
+  },
+  image: {
+    height: 300,
+    width: 200,
+    marginBottom: 16,
   },
 });

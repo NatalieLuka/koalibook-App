@@ -1,17 +1,20 @@
 import { View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
-import { useAuth } from "@clerk/clerk-expo";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 
 export default function ProfilePage() {
   const { getToken } = useAuth();
+  const { user } = useUser();
 
   async function handleGetToken() {
     const token = await getToken();
+    console.log(token);
   }
 
   return (
     <>
+      <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
       <Text style={globalStyles.heading}>I am the Profilepage</Text>
       <Pressable onPress={handleGetToken}>
         <Text>Get Token</Text>

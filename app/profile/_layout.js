@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { Text, Pressable } from "react-native";
 import { globalStyles } from "../../styles/globalStyles";
 import { Stack, router } from "expo-router";
+import { Image } from "expo-image";
 
 export default function ProfileStack() {
   const { signOut } = useAuth();
