@@ -7,7 +7,7 @@ import { COLORS } from "../../styles/constants";
 import { router } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const API = "http://localhost:3000/books";
+const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
 const renderItem = ({ item }) => {
   return (
@@ -30,7 +30,6 @@ export default function BooksPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useFocusEffect(
-    // next.js useEffect
     useCallback(() => {
       async function loadData() {
         try {

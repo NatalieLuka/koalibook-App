@@ -7,7 +7,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { COLORS } from "../../../styles/constants";
 import { Image } from "expo-image";
 
-const API = "http://localhost:3000/books";
+const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
 export default function BookDetailPage() {
   const { isbn } = useLocalSearchParams();
