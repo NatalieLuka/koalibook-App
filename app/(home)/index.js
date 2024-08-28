@@ -5,10 +5,11 @@ import { COLORS } from "../../styles/constants";
 // import { FONTS } from "../../styles/constants";
 import { useSignIn } from "@clerk/clerk-expo";
 import { router } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function HomePage() {
   const { signIn, setActive, isLoaded } = useSignIn();
-
+  const { user } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,42 +39,49 @@ export default function HomePage() {
 
   return (
     <>
-      <View>
-        <Text style={globalStyles.heading}>Welcome to Koalibook</Text>
-      </View>
-      <View style={styles.loginContainer}>
-        <TextInput
-          placeholder="E-mail"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
-          }}
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="Password"
-          autoCapitalize="none"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-          }}
-          secureTextEntry={true}
-          style={styles.textInput}
-        />
+      {!user ? (
+        <>
+          <View>
+            <Text style={globalStyles.heading}>Welcome to Koalibook</Text>
+            <Text style={globalStyles.subHeading}>
+              Your Cozy Space to Manage Your Reading Journey!
+            </Text>
+          </View>
+          <View style={styles.loginContainer}>
+            <TextInput
+              placeholder="E-mail"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+              }}
+              style={styles.textInput}
+            />
+            <TextInput
+              placeholder="Password"
+              autoCapitalize="none"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              secureTextEntry={true}
+              style={styles.textInput}
+            />
 
-        <Pressable
-          style={({ pressed }) => [
-            globalStyles.button,
-            {
-              backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
-            },
-          ]}
-          onPress={handleSubmit}
-        >
-          <Text style={globalStyles.buttonText}>Login</Text>
-        </Pressable>
-      </View>
+            <Pressable
+              style={({ pressed }) => [
+                globalStyles.button,
+                {
+                  backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
+                },
+              ]}
+              onPress={handleSubmit}
+            >
+              <Text style={globalStyles.buttonText}>Login</Text>
+            </Pressable>
+          </View>
+        </>
+      ) : null}
     </>
   );
 }

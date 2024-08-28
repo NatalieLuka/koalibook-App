@@ -4,34 +4,69 @@ import { COLORS } from "./constants";
 
 export const globalStyles = StyleSheet.create({
   pageContainer: {
-    padding: 20,
     flex: 1,
     backgroundColor: COLORS.background,
   },
 
   heading: {
-    fontSize: 32,
-    color: COLORS.secondary,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
+    marginBottom: 12,
+  },
+  subHeading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
+    marginBottom: 16,
+  },
+  paragraph: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
+    marginBottom: 10,
   },
 
+  listContainer: {
+    padding: 16,
+    backgroundColor: COLORS.background,
+  },
+  card: {
+    backgroundColor: COLORS.primary,
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
+    marginBottom: 8,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: COLORS.paragraphLight,
+    marginBottom: 12,
+  },
   button: {
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.accent,
-    borderColor: COLORS.secondary,
-    borderWidth: 1,
-    borderRadius: 6,
-    height: 40,
-    justifyContent: "center",
+    backgroundColor: COLORS.secondary,
+    padding: 10,
+    borderRadius: 8,
     alignItems: "center",
   },
   buttonText: {
-    color: COLORS.background,
-    fontSize: 16,
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
   },
-  paragraph: {
-    // fontFamily: FONTS.default.regular,
-    fontSize: 18,
-    marginTop: 25,
-    marginHorizontal: 20,
+  listItem: {
+    fontSize: 16,
+    color: COLORS.paragraphDark,
+    paddingVertical: 8,
   },
 });
