@@ -43,6 +43,9 @@ export default function HomePage() {
         <>
           <View>
             <Text style={globalStyles.heading}>Welcome to Koalibook</Text>
+            <Text style={globalStyles.subHeading}>
+              Your Cozy Space to Manage Your Reading Journey!
+            </Text>
           </View>
           <View style={styles.loginContainer}>
             <TextInput

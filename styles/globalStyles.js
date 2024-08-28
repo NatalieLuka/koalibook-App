@@ -12,8 +12,21 @@ export const globalStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.paragraphDark,
+    marginBottom: 12,
+  },
+  subHeading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
     marginBottom: 16,
   },
+  paragraph: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: COLORS.paragraphDark,
+    marginBottom: 10,
+  },
+
   listContainer: {
     padding: 16,
     backgroundColor: COLORS.background,

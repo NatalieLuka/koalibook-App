@@ -15,8 +15,11 @@ const renderItem = ({ item }) => {
       <Text style={globalStyles.cardTitle}>{item.title}</Text>
       <Text style={globalStyles.cardAuthor}>by {item.author}</Text>
       <Pressable
-        style={globalStyles.button}
         onPress={() => router.push(`/books/${item.isbn}`)}
+        style={({ pressed }) => [
+          globalStyles.button,
+          { backgroundColor: pressed ? COLORS.primary : COLORS.secondary },
+        ]}
       >
         <Text style={globalStyles.buttonText}>View Details</Text>
       </Pressable>
