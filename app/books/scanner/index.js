@@ -7,12 +7,54 @@ import { COLORS } from "../../../styles/constants";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
+const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
+
 export default function CameraPage() {
   const [cameraFacing, setCameraFacing] = useState("back");
   const [activeScanner, setActiveScanner] = useState(true);
   const [permission, requestPermission] = useCameraPermissions();
   const [isbn, setIsbn] = useState("N/A");
   const { user } = useUser();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [bookInfo, setBookInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchBookInfo = async (isbn) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BooksAPI}${isbn}`);
+      const data = await response.json();
+      if (data.items && data.items.length > 0) {
+        setBookInfo(data.items[0].volumeInfo);
+
+        setModalVisible(true);
+
+        const addBookResponse = await fetch(
+          "https://koalibook-api.onrender.com/books",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ book: data.items[0].volumeInfo }),
+          }
+        );
+
+        if (addBookResponse.ok) {
+          Alert.alert("Success", "Book added to your list successfully.");
+        } else {
+          // Alert.alert("Error", "Failed to add book to your list.");
+          Alert.alert(addBookResponse);
+        }
+      } else {
+        Alert.alert("Book not found", "No book found with the provided ISBN.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch book information.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!permission) {
     return (
@@ -40,6 +82,7 @@ export default function CameraPage() {
             if (activeScanner) {
               setIsbn(scanningResult.data);
               setActiveScanner(false);
+              fetchBookInfo(scanningResult.data);
             }
           }}
           style={styles.camera}
@@ -71,6 +114,46 @@ export default function CameraPage() {
         >
           <Text style={globalStyles.buttonText}>Scan again</Text>
         </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalView}>
+            {bookInfo && (
+              <>
+                <Text style={styles.modalText}>Title: {bookInfo.title}</Text>
+                <Text style={styles.modalText}>
+                  Author: {bookInfo.authors?.join(", ")}
+                </Text>
+                <Text style={styles.modalText}>
+                  Published: {bookInfo.publishedDate}
+                </Text>
+                <Pressable
+                  style={[globalStyles.button, styles.buttonClose]}
+                  onPress={() => {
+                    Alert.alert(
+                      "Book Added",
+                      "This book has been added to your list!"
+                    );
+                    setModalVisible(false);
+                  }}
+                >
+                  <Text style={globalStyles.buttonText}>Add to List</Text>
+                </Pressable>
+              </>
+            )}
+            <Pressable
+              style={[globalStyles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={globalStyles.buttonText}>Close</Text>
+            </Pressable>
+          </View>
+        </Modal>
 
         <StatusBar style="auto" />
       </SafeAreaView>
@@ -89,5 +172,27 @@ const styles = StyleSheet.create({
   camera: {
     width: "80%",
     height: "50%",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonClose: {
+    backgroundColor: COLORS.secondary,
   },
 });
