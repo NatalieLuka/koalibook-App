@@ -1,13 +1,15 @@
 import { Pressable, StyleSheet, Text, View, Alert, Modal } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState } from "react";
-import { useUser } from "@clerk/clerk-expo";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 import { globalStyles } from "../../../styles/globalStyles";
 import { COLORS } from "../../../styles/constants";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
 
 const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
+const API = "http://localhost:3000/books";
 
 export default function CameraPage() {
   const [cameraFacing, setCameraFacing] = useState("back");
@@ -15,6 +17,7 @@ export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isbn, setIsbn] = useState("N/A");
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [bookInfo, setBookInfo] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -25,26 +28,31 @@ export default function CameraPage() {
       const response = await fetch(`${BooksAPI}${isbn}`);
       const data = await response.json();
       if (data.items && data.items.length > 0) {
-        setBookInfo(data.items[0].volumeInfo);
-
+        const bookData = {
+          title: data.items[0].volumeInfo.title,
+          authors: data.items[0].volumeInfo.authors,
+          description: data.items[0].volumeInfo.description,
+          isbn: isbn,
+          image: data.items[0].volumeInfo.imageLinks?.thumbnail,
+        };
+        setBookInfo(bookData);
         setModalVisible(true);
 
-        const addBookResponse = await fetch(
-          "https://koalibook-api.onrender.com/books",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ book: data.items[0].volumeInfo }),
-          }
-        );
+        const token = await getToken();
+
+        const addBookResponse = await fetch("http://localhost:3000/books", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(bookData),
+        });
 
         if (addBookResponse.ok) {
           Alert.alert("Success", "Book added to your list successfully.");
         } else {
-          // Alert.alert("Error", "Failed to add book to your list.");
-          Alert.alert(addBookResponse);
+          Alert.alert("Error", "Failed to add book to your list.");
         }
       } else {
         Alert.alert("Book not found", "No book found with the provided ISBN.");
@@ -129,9 +137,9 @@ export default function CameraPage() {
                 <Text style={styles.modalText}>
                   Author: {bookInfo.authors?.join(", ")}
                 </Text>
-                <Text style={styles.modalText}>
-                  Published: {bookInfo.publishedDate}
-                </Text>
+                {/* <Text style={styles.modalText}>
+                  Textsnippet: {bookInfo.textSnippet}
+                </Text> */}
                 <Pressable
                   style={[globalStyles.button, styles.buttonClose]}
                   onPress={() => {
