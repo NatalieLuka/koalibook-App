@@ -1,5 +1,8 @@
 import { Redirect } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function IndexPage() {
-  return <Redirect href="(home)" />;
+  const { user } = useUser();
+
+  return <Redirect href={!user ? "(home)" : "/profile"} />;
 }

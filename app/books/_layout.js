@@ -25,7 +25,7 @@ export default function BooksStack() {
         }}
       />
       <Stack.Screen
-        name="[bookid]/index"
+        name="[isbn]/index"
         options={{
           title: "Book Details",
         }}
