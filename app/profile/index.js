@@ -1,7 +1,10 @@
-import { View, Text, Pressable } from "react-native";
+
+import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
 import { useUser, useAuth } from "@clerk/clerk-expo";
+import ProgressChart from "../../components/ProgressChart";
+
 
 export default function ProfilePage() {
   const { getToken } = useAuth();
@@ -18,7 +21,11 @@ export default function ProfilePage() {
       <Text style={globalStyles.heading}>I am the Profilepage</Text>
       <Pressable onPress={handleGetToken}>
         <Text>Get Token</Text>
-      </Pressable>
+ </Pressable>
+        <ProgressChart />
+
+
+     
     </>
   );
 }

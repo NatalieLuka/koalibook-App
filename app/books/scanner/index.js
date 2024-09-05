@@ -1,11 +1,15 @@
 import { Pressable, StyleSheet, Text, View, Alert, Modal } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState } from "react";
-import { useUser } from "@clerk/clerk-expo";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 import { globalStyles } from "../../../styles/globalStyles";
 import { COLORS } from "../../../styles/constants";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
+
+const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
+const API = process.env.EXPO_PUBLIC_API_URL;
 
 export default function CameraPage() {
   const [cameraFacing, setCameraFacing] = useState("back");
@@ -13,6 +17,60 @@ export default function CameraPage() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isbn, setIsbn] = useState("N/A");
   const { user } = useUser();
+  const { getToken } = useAuth();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [bookInfo, setBookInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchBookInfo = async (isbn) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BooksAPI}${isbn}`);
+      const data = await response.json();
+
+      if (data.items && data.items.length > 0) {
+        const bookData = {
+          title: data.items[0].volumeInfo.title,
+          authors: data.items[0].volumeInfo.authors,
+          description: data.items[0].volumeInfo.description,
+          isbn: isbn,
+          image: data.items[0].volumeInfo.imageLinks?.thumbnail,
+          pageCount: data.items[0].volumeInfo.pageCount,
+        };
+
+        setBookInfo(bookData);
+        setModalVisible(true);
+      } else {
+        Alert.alert("Book not found", "No book found with the provided ISBN.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch book information.");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addBookToList = async (bookData) => {
+    const token = await getToken();
+
+    const addBookResponse = await fetch(`${API}/books`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(bookData),
+    });
+
+    const addBookJson = await addBookResponse.json(); // parsed aus dem body das JSON
+    console.log(addBookJson);
+    if (addBookResponse.ok) {
+      Alert.alert("Success", "Book added to your list successfully.");
+    } else {
+      Alert.alert("Error", "Failed to add book to your list.");
+    }
+  };
 
   if (!permission) {
     return (
@@ -40,6 +98,7 @@ export default function CameraPage() {
             if (activeScanner) {
               setIsbn(scanningResult.data);
               setActiveScanner(false);
+              fetchBookInfo(scanningResult.data);
             }
           }}
           style={styles.camera}
@@ -71,6 +130,47 @@ export default function CameraPage() {
         >
           <Text style={globalStyles.buttonText}>Scan again</Text>
         </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalView}>
+            {bookInfo && (
+              <>
+                <Text style={styles.modalText}>Title: {bookInfo.title}</Text>
+                <Text style={styles.modalText}>
+                  Author: {bookInfo.authors?.join(", ")}
+                </Text>
+                {/* <Text style={styles.modalText}>
+                  Textsnippet: {bookInfo.textSnippet}
+                </Text> */}
+                <Pressable
+                  style={[globalStyles.button, styles.buttonClose]}
+                  onPress={() => {
+                    addBookToList(bookInfo);
+                    setModalVisible(false);
+                    Alert.alert(
+                      "Book Added",
+                      "This book has been added to your list!"
+                    );
+                  }}
+                >
+                  <Text style={globalStyles.buttonText}>Add to List</Text>
+                </Pressable>
+              </>
+            )}
+            <Pressable
+              style={[globalStyles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={globalStyles.buttonText}>Close</Text>
+            </Pressable>
+          </View>
+        </Modal>
 
         <StatusBar style="auto" />
       </SafeAreaView>
@@ -89,5 +189,27 @@ const styles = StyleSheet.create({
   camera: {
     width: "80%",
     height: "50%",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonClose: {
+    backgroundColor: COLORS.secondary,
   },
 });
