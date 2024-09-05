@@ -9,7 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 
 const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
-const API = "http://localhost:3000/books";
+const API = process.env.EXPO_PUBLIC_API_URL;
 
 export default function CameraPage() {
   const [cameraFacing, setCameraFacing] = useState("back");
@@ -27,6 +27,7 @@ export default function CameraPage() {
     try {
       const response = await fetch(`${BooksAPI}${isbn}`);
       const data = await response.json();
+
       if (data.items && data.items.length > 0) {
         const bookData = {
           title: data.items[0].volumeInfo.title,
@@ -34,33 +35,40 @@ export default function CameraPage() {
           description: data.items[0].volumeInfo.description,
           isbn: isbn,
           image: data.items[0].volumeInfo.imageLinks?.thumbnail,
+          pageCount: data.items[0].volumeInfo.pageCount,
         };
+
         setBookInfo(bookData);
         setModalVisible(true);
-
-        const token = await getToken();
-
-        const addBookResponse = await fetch("http://localhost:3000/books", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(bookData),
-        });
-
-        if (addBookResponse.ok) {
-          Alert.alert("Success", "Book added to your list successfully.");
-        } else {
-          Alert.alert("Error", "Failed to add book to your list.");
-        }
       } else {
         Alert.alert("Book not found", "No book found with the provided ISBN.");
       }
     } catch (error) {
       Alert.alert("Error", "Failed to fetch book information.");
+      console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addBookToList = async (bookData) => {
+    const token = await getToken();
+
+    const addBookResponse = await fetch(`${API}/books`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(bookData),
+    });
+
+    const addBookJson = await addBookResponse.json(); // parsed aus dem body das JSON
+    console.log(addBookJson);
+    if (addBookResponse.ok) {
+      Alert.alert("Success", "Book added to your list successfully.");
+    } else {
+      Alert.alert("Error", "Failed to add book to your list.");
     }
   };
 
@@ -143,11 +151,12 @@ export default function CameraPage() {
                 <Pressable
                   style={[globalStyles.button, styles.buttonClose]}
                   onPress={() => {
+                    addBookToList(bookInfo);
+                    setModalVisible(false);
                     Alert.alert(
                       "Book Added",
                       "This book has been added to your list!"
                     );
-                    setModalVisible(false);
                   }}
                 >
                   <Text style={globalStyles.buttonText}>Add to List</Text>
