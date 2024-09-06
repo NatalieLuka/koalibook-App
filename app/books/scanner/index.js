@@ -7,6 +7,7 @@ import { COLORS } from "../../../styles/constants";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
+import koalaPlaceholder from "../../../assets/noBookImage.png";
 
 const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
 const API = process.env.EXPO_PUBLIC_API_URL;
@@ -51,13 +52,16 @@ export default function CameraPage() {
             author: data.items[0].volumeInfo.authors.join(", "),
             description: "No description found.",
             isbn: isbn,
-            image: "",
+            image: koalaPlaceholder,
             pageCount: data.items[0].volumeInfo.pageCount,
           };
           if (selfLinkData.volumeInfo.description) {
             bookData.description = selfLinkData.volumeInfo.description;
-            bookData.image = selfLinkData.volumeInfo.imageLinks?.thumbnail;
           }
+          if (selfLinkData.volumeInfo.imageLinks?.thumbnail) {
+            bookData.image = selfLinkData.volumeInfo.imageLinks.thumbnail;
+          }
+
           console.log("data: ", JSON.stringify(data, null, 2));
           console.log("bookData: ", JSON.stringify(bookData, null, 2));
           setBookInfo(bookData);

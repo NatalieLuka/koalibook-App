@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +7,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { COLORS } from "../../../styles/constants";
 import { Image } from "expo-image";
 import { useWindowDimensions } from "react-native";
-import { WebView } from "react-native-webview";
+import koalaPlaceholder from "../../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
@@ -72,7 +66,10 @@ export default function BookDetailPage() {
           {/* <Text>{JSON.stringify(book)}</Text> */}
           <Text style={globalStyles.heading}>{book.title}</Text>
           <Text style={globalStyles.paragraph}>{book.author}</Text>
-          <Image style={styles.image} source={book.image}></Image>
+          <Image
+            style={styles.image}
+            source={book.image ? { uri: book.image } : koalaPlaceholder}
+          />
           <Text style={globalStyles.paragraph}>
             {book.description.replace(/<\/?[^>]+(>|$)/g, "")}
           </Text>
@@ -92,7 +89,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
-    width: 200,
+    width: 250,
     marginBottom: 16,
   },
 });
