@@ -25,21 +25,44 @@ export default function CameraPage() {
   const fetchBookInfo = async (isbn) => {
     setLoading(true);
     try {
-      const response = await fetch(`${BooksAPI}${isbn}`);
+      const url = `${BooksAPI}${isbn}`;
+      const response = await fetch(url);
+      console.log(
+        "static url:",
+        "https://www.googleapis.com/books/v1/volumes?q=isbn:9783551585394"
+      );
+      console.log("url:", url);
       const data = await response.json();
 
       if (data.items && data.items.length > 0) {
-        const bookData = {
-          title: data.items[0].volumeInfo.title,
-          authors: data.items[0].volumeInfo.authors,
-          description: data.items[0].volumeInfo.description,
-          isbn: isbn,
-          image: data.items[0].volumeInfo.imageLinks?.thumbnail,
-          pageCount: data.items[0].volumeInfo.pageCount,
-        };
-
-        setBookInfo(bookData);
-        setModalVisible(true);
+        const selfLink = data.items[0].selfLink;
+        console.log(
+          "static selflink:",
+          "https://www.googleapis.com/books/v1/volumes/bgjtEAAAQBAJ"
+        );
+        console.log("selfLink:", selfLink);
+        if (selfLink) {
+          const selfLinkResponse = await fetch(selfLink);
+          const selfLinkData = await selfLinkResponse.json();
+          console.log("------------------");
+          console.log("selfLinkData: ", JSON.stringify(selfLinkData, null, 2));
+          const bookData = {
+            title: data.items[0].volumeInfo.title,
+            author: data.items[0].volumeInfo.authors.join(", "),
+            description: "No description found.",
+            isbn: isbn,
+            image: "",
+            pageCount: data.items[0].volumeInfo.pageCount,
+          };
+          if (selfLinkData.volumeInfo.description) {
+            bookData.description = selfLinkData.volumeInfo.description;
+            bookData.image = selfLinkData.volumeInfo.imageLinks?.thumbnail;
+          }
+          console.log("data: ", JSON.stringify(data, null, 2));
+          console.log("bookData: ", JSON.stringify(bookData, null, 2));
+          setBookInfo(bookData);
+          setModalVisible(true);
+        }
       } else {
         Alert.alert("Book not found", "No book found with the provided ISBN.");
       }
@@ -142,9 +165,7 @@ export default function CameraPage() {
             {bookInfo && (
               <>
                 <Text style={styles.modalText}>Title: {bookInfo.title}</Text>
-                <Text style={styles.modalText}>
-                  Author: {bookInfo.authors?.join(", ")}
-                </Text>
+                <Text style={styles.modalText}>Author: {bookInfo.author}</Text>
                 {/* <Text style={styles.modalText}>
                   Textsnippet: {bookInfo.textSnippet}
                 </Text> */}
