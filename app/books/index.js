@@ -74,6 +74,7 @@ export default function BooksPage() {
         >
           <Text style={globalStyles.buttonText}>Add New Book</Text>
         </Pressable>
+
         <FlatList
           data={books}
           renderItem={renderItem}
