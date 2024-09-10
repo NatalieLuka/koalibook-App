@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Scrollview, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -6,6 +6,8 @@ import { globalStyles } from "../../../styles/globalStyles";
 import { useAuth } from "@clerk/clerk-expo";
 import { COLORS } from "../../../styles/constants";
 import { Image } from "expo-image";
+import { useWindowDimensions } from "react-native";
+import koalaPlaceholder from "../../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
@@ -13,7 +15,8 @@ export default function BookDetailPage() {
   const { isbn } = useLocalSearchParams();
   const { getToken } = useAuth();
   const [book, setBook] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     async function loadBookDetails() {
@@ -43,7 +46,9 @@ export default function BookDetailPage() {
       loadBookDetails();
     }
   }, [isbn, getToken]);
-
+  // if (isLoading) {
+  //   return <ActivityIndicator />;
+  // }
   if (!book) {
     return (
       <SafeAreaProvider>
@@ -58,11 +63,16 @@ export default function BookDetailPage() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {/* <Text>{JSON.stringify(book)}</Text> */}
           <Text style={globalStyles.heading}>{book.title}</Text>
           <Text style={globalStyles.paragraph}>{book.author}</Text>
-          <Image style={styles.image} source={book.image}></Image>
-
-          <Text style={globalStyles.paragraph}>{book.description}</Text>
+          <Image
+            style={styles.image}
+            source={book.image ? { uri: book.image } : koalaPlaceholder}
+          />
+          <Text style={globalStyles.paragraph}>
+            {book.description.replace(/<\/?[^>]+(>|$)/g, "")}
+          </Text>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -79,7 +89,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
-    width: 200,
+    width: 250,
     marginBottom: 16,
   },
 });

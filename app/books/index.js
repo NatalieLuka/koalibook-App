@@ -1,4 +1,4 @@
-import { FlatList, View, Text, Pressable, StyleSheet } from "react-native";
+import { FlatList, View, Text, Pressable, Alert } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
 import { useAuth } from "@clerk/clerk-expo";
@@ -9,7 +9,28 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
-const renderItem = ({ item }) => {
+const removeBookFromList = async (isbn, setBooks, getToken) => {
+  try {
+    setBooks((prevBooks) => prevBooks.filter((book) => book.isbn !== isbn));
+    const token = await getToken();
+    const deleteResponse = await fetch(`${API}/${isbn}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (deleteResponse.ok) {
+      Alert.alert("Success", "Book removed from your list.");
+    } else {
+      Alert.alert("Error", "Failed to remove book from your list.");
+    }
+  } catch (error) {
+    console.log(error);
+    Alert.alert("Error", "An error occurred while removing the book.");
+  }
+};
+
+const renderItem = ({ item, setBooks, getToken }) => {
   return (
     <View style={globalStyles.card}>
       <Text style={globalStyles.cardTitle}>{item.title}</Text>
@@ -22,6 +43,15 @@ const renderItem = ({ item }) => {
         ]}
       >
         <Text style={globalStyles.buttonText}>View Details</Text>
+      </Pressable>
+      <Pressable
+        onPress={() => removeBookFromList(item.isbn, setBooks, getToken)}
+        style={({ pressed }) => [
+          globalStyles.button,
+          { backgroundColor: pressed ? COLORS.primary : COLORS.error },
+        ]}
+      >
+        <Text style={globalStyles.buttonText}>Remove Book</Text>
       </Pressable>
     </View>
   );
@@ -76,7 +106,7 @@ export default function BooksPage() {
         </Pressable>
         <FlatList
           data={books}
-          renderItem={renderItem}
+          renderItem={({ item }) => renderItem({ item, setBooks, getToken })}
           keyExtractor={(item) => item.isbn.toString()}
           contentContainerStyle={globalStyles.listContainer}
         />

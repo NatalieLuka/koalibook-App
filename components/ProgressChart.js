@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: COLORS.paragraphLight,
     borderWidth: 1,
+    borderRadius: 5,
     marginRight: 10,
     paddingLeft: 8,
     width: 100,
