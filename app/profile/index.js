@@ -17,9 +17,6 @@ export default function ProfilePage() {
     <>
       <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
       <Text style={globalStyles.heading}>I am the Profilepage</Text>
-      {/* <Pressable onPress={handleGetToken}> */}
-      {/* <Text>Get Token</Text>
- </Pressable> */}
       <ProgressChart />
     </>
   );

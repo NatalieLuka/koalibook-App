@@ -78,12 +78,12 @@ function TabNavigation() {
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="upcoming"
         options={{
-          href: user ? "/search" : null,
-          title: "Search",
+          href: user ? "/upcoming" : null,
+          title: "Upcoming",
           tabBarIcon: ({ color }) => {
-            return <FontAwesome name="search" size={24} color={color} />;
+            return <FontAwesome5 name="list-ol" size={24} color={color} />;
           },
         }}
       />

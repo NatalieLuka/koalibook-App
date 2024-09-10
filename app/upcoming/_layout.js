@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { COLORS } from "../../styles/constants";
 
-export default function SearchStack() {
+export default function PreOrderStack() {
   return (
     <Stack
       screenOptions={{
@@ -21,7 +21,7 @@ export default function SearchStack() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Search",
+          title: "Upcoming",
         }}
       />
     </Stack>
