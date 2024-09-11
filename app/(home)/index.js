@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 6,
     padding: 8,
-    // fontFamily: FONTS.default.regular,
     fontSize: 18,
     backgroundColor: "white",
   },

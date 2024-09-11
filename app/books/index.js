@@ -35,7 +35,7 @@ export default function BooksPage() {
   const { getToken } = useAuth();
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { selectBook } = useActiveBook();
+  const { setActiveBook } = useActiveBook();
 
   useFocusEffect(
     useCallback(() => {
@@ -83,7 +83,7 @@ export default function BooksPage() {
 
           <Pressable
             onPress={() => {
-              router.push("/profile"), selectBook(item);
+              router.push("/profile"), setActiveBook(item);
             }}
             style={({ pressed }) => [
               globalStyles.button,

@@ -1,26 +1,15 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  Image,
-} from "react-native";
-import { globalStyles } from "../styles/globalStyles";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { COLORS } from "../styles/constants";
-import { Picker } from "@react-native-picker/picker";
 import climbingKoala from "../assets/climbingKoala.png";
 import { useEffect } from "react";
 import { useAuth } from "@clerk/clerk-expo";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
-const ProgressChart = ({ isbn }) => {
+const ProgressChart = ({ isbn, currentPage, pageCount }) => {
   const { getToken } = useAuth();
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState("");
-  const [selectedDay, setSelectedDay] = useState("Mo");
   const maxBarHeight = 150;
 
   const fetchProgressData = async () => {
@@ -50,34 +39,17 @@ const ProgressChart = ({ isbn }) => {
     }
   };
 
+  const progressPercentage = (currentPage / pageCount) * 100;
+
   useEffect(() => {
-    fetchProgressData();
+    if (isbn) {
+      fetchProgressData();
+    }
   }, [isbn]);
 
-  const updatePages = async () => {
-    try {
-      const token = await getToken();
-
-      const response = await fetch(`${API}/${isbn}/progress`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          newPage: parseInt(currentPage, 10),
-        }),
-      });
-      if (response.ok) {
-        await fetchProgressData();
-        setCurrentPage("");
-      } else {
-        Alert.alert("Error, Data could not be updated");
-      }
-    } catch (error) {
-      console.error("Error sending data:", error);
-    }
-  };
+  useEffect(() => {
+    fetchProgressData();
+  }, [currentPage, pageCount]);
 
   const maxPages = Math.max(...data.map((entry) => entry.pages), 1);
 
@@ -91,20 +63,6 @@ const ProgressChart = ({ isbn }) => {
         }}
       ></View>
       <View style={styles.container}>
-        {/* <View style={styles.inputContainer}> */}
-        {/* <Pressable
-          style={({ pressed }) => [
-            globalStyles.button,
-            {
-              backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
-            },
-          ]}
-          onPress={updatePages}
-        >
-          <Text style={globalStyles.buttonText}>Update</Text>
-        </Pressable> */}
-        {/* </View> */}
-
         <View style={styles.chartContainer}>
           {data.map((entry, index) => {
             const barHeight =

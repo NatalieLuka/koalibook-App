@@ -13,6 +13,7 @@ import ProgressChart from "../../components/ProgressChart";
 import { useActiveBook } from "../../context/ActiveBookContext";
 import { COLORS } from "../../styles/constants";
 import { useState } from "react";
+import koalaPlaceholder from "../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
@@ -20,16 +21,12 @@ export default function ProfilePage() {
   const { user } = useUser();
   const { activeBook, setActiveBook } = useActiveBook();
   const { getToken } = useAuth();
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState("");
-  const [selectedDay, setSelectedDay] = useState([]);
+
   const currentDisplayedPage = activeBook?.currentPage || 0;
   const pageCount = activeBook?.pageCount || 0;
-
-  const progressPercentage = activeBook
-    ? (currentDisplayedPage / activeBook.pageCount) * 100
-    : 0;
+  const progressPercentage = (currentDisplayedPage / pageCount) * 100;
 
   const updatePages = async () => {
     try {
@@ -51,7 +48,7 @@ export default function ProfilePage() {
           ...activeBook,
           currentPage: parseInt(currentPage, 10),
         });
-        setCurrentPage();
+        setCurrentPage("");
         setModalVisible(false);
       } else {
         Alert.alert("Fehler: Die Daten konnten nicht aktualisiert werden.");
@@ -67,7 +64,15 @@ export default function ProfilePage() {
       <Text style={globalStyles.heading}>My Reading Progress</Text>
       {activeBook ? (
         <View style={styles.activeBookContainer}>
-          <Image source={{ uri: activeBook.image }} style={styles.bookImage} />
+          <Image
+            style={styles.bookImage}
+            source={
+              activeBook.image !== "22" || false
+                ? { uri: activeBook.image }
+                : koalaPlaceholder
+            }
+          />
+
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle}>{activeBook.title}</Text>
             <Text style={styles.bookPages}>
@@ -126,7 +131,12 @@ export default function ProfilePage() {
           </View>
         </View>
       </Modal>
-      <ProgressChart isbn={activeBook?.isbn} />
+
+      <ProgressChart
+        isbn={activeBook?.isbn || "no-isbn"}
+        currentPage={activeBook?.currentPage || 0}
+        pageCount={activeBook?.pageCount || 1}
+      />
     </>
   );
 }
@@ -162,7 +172,7 @@ const styles = StyleSheet.create({
   },
   bookImage: {
     width: 90,
-    height: 150,
+    height: 110,
     borderRadius: 8,
     marginRight: 15,
   },
@@ -204,7 +214,7 @@ const styles = StyleSheet.create({
   noBook: {
     color: COLORS.error,
     textAlign: "center",
-    marginTop: 20,
+    margin: 75,
   },
   modalContainer: {
     flex: 1,
