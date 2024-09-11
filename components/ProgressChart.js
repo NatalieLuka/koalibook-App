@@ -52,7 +52,7 @@ const ProgressChart = ({ isbn }) => {
 
   useEffect(() => {
     fetchProgressData();
-  }, []);
+  }, [isbn]);
 
   const updatePages = async () => {
     try {
@@ -82,31 +82,17 @@ const ProgressChart = ({ isbn }) => {
   const maxPages = Math.max(...data.map((entry) => entry.pages), 1);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Pages read"
-          keyboardType="numeric"
-          value={currentPage}
-          onChangeText={(number) => setCurrentPage(number)}
-        />
-        <Picker
-          selectedValue={selectedDay}
-          style={styles.picker}
-          itemStyle={styles.item}
-          onValueChange={(itemValue) => setSelectedDay(itemValue)}
-        >
-          <Picker.Item label="Monday" value="Mon" />
-          <Picker.Item label="Tuesday" value="Tue" />
-          <Picker.Item label="Wednesday" value="Wed" />
-          <Picker.Item label="Thursday" value="Thu" />
-          <Picker.Item label="Friday" value="Fri" />
-          <Picker.Item label="Saturday" value="Sat" />
-          <Picker.Item label="Sunday" value="Sun" />
-        </Picker>
-
-        <Pressable
+    <>
+      <View
+        style={{
+          backgroundColor: COLORS.paragraphDark,
+          height: 1,
+          width: "100%",
+        }}
+      ></View>
+      <View style={styles.container}>
+        {/* <View style={styles.inputContainer}> */}
+        {/* <Pressable
           style={({ pressed }) => [
             globalStyles.button,
             {
@@ -116,31 +102,31 @@ const ProgressChart = ({ isbn }) => {
           onPress={updatePages}
         >
           <Text style={globalStyles.buttonText}>Update</Text>
-        </Pressable>
-      </View>
+        </Pressable> */}
+        {/* </View> */}
 
-      <View style={styles.chartContainer}>
-        {data.map((entry, index) => {
-          const barHeight =
-            maxPages > 0 ? (entry.pages / maxPages) * maxBarHeight : 0;
-
-          return (
-            <View key={index} style={styles.barContainer}>
-              <Text style={styles.pageText}>{entry.pages}</Text>
-              <View style={[styles.bar, { height: barHeight }]}>
-                {barHeight > 0 && (
-                  <Image
-                    source={climbingKoala}
-                    style={[styles.icon, { bottom: barHeight - 20 }]}
-                  />
-                )}
+        <View style={styles.chartContainer}>
+          {data.map((entry, index) => {
+            const barHeight =
+              maxPages > 0 ? (entry.pages / maxPages) * maxBarHeight : 0;
+            return (
+              <View key={index} style={styles.barContainer}>
+                <Text style={styles.pageText}>{entry.pages}</Text>
+                <View style={[styles.bar, { height: barHeight }]}>
+                  {barHeight > 0 && (
+                    <Image
+                      source={climbingKoala}
+                      style={[styles.icon, { bottom: barHeight - 20 }]}
+                    />
+                  )}
+                </View>
+                <Text style={styles.dayText}>{entry.day}</Text>
               </View>
-              <Text style={styles.dayText}>{entry.day}</Text>
-            </View>
-          );
-        })}
+            );
+          })}
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 

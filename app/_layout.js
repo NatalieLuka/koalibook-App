@@ -1,10 +1,11 @@
 import { Tabs } from "expo-router";
 import { COLORS } from "../styles/constants";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { usePathname } from "expo-router";
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import { useUser } from "@clerk/clerk-expo";
+import { BookProvider } from "../context/ActiveBookContext";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -106,7 +107,9 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
-        <TabNavigation />
+        <BookProvider>
+          <TabNavigation />
+        </BookProvider>
       </ClerkLoaded>
     </ClerkProvider>
   );

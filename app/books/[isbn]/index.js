@@ -68,7 +68,11 @@ export default function BookDetailPage() {
           <Text style={globalStyles.paragraph}>{book.author}</Text>
           <Image
             style={styles.image}
-            source={book.image ? { uri: book.image } : koalaPlaceholder}
+            source={
+              book.image !== "22" || false
+                ? { uri: book.image }
+                : koalaPlaceholder
+            }
           />
           <Text style={globalStyles.paragraph}>
             {book.description.replace(/<\/?[^>]+(>|$)/g, "")}

@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "./constants";
-// import { FONTS } from "./constants";
 
 export const globalStyles = StyleSheet.create({
   pageContainer: {
@@ -31,6 +30,7 @@ export const globalStyles = StyleSheet.create({
     padding: 16,
     backgroundColor: COLORS.background,
   },
+  cardButtonContainer: { gap: 5 },
   card: {
     backgroundColor: COLORS.primary,
     padding: 16,
@@ -46,7 +46,12 @@ export const globalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.paragraphDark,
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  cardAuthor: {
+    marginBottom: 6,
+    color: COLORS.paragraphDark,
+    fontWeight: "bold",
   },
   cardSubtitle: {
     fontSize: 14,
