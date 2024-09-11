@@ -67,9 +67,13 @@ export default function BookDetailPage() {
           <Text style={globalStyles.heading}>{book.title}</Text>
           <Text style={globalStyles.paragraph}>{book.author}</Text>
           <Image
-            style={styles.image}
+            style={
+              book.image !== "22" && book.image
+                ? styles.image
+                : styles.koalaPlaceholder
+            }
             source={
-              book.image !== "22" || false
+              book.image !== "22" && book.image
                 ? { uri: book.image }
                 : koalaPlaceholder
             }
@@ -92,7 +96,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   image: {
-    height: 300,
+    height: 250,
+    width: 150,
+    marginBottom: 16,
+  },
+  koalaPlaceholder: {
+    height: 250,
     width: 250,
     marginBottom: 16,
   },

@@ -65,14 +65,17 @@ export default function ProfilePage() {
       {activeBook ? (
         <View style={styles.activeBookContainer}>
           <Image
-            style={styles.bookImage}
+            style={
+              activeBook.image !== "22" && activeBook.image
+                ? styles.bookImage
+                : styles.koalaPlaceholder
+            }
             source={
-              activeBook.image !== "22" || false
+              activeBook.image !== "22" && activeBook.image
                 ? { uri: activeBook.image }
                 : koalaPlaceholder
             }
           />
-
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle}>{activeBook.title}</Text>
             <Text style={styles.bookPages}>
@@ -172,7 +175,13 @@ const styles = StyleSheet.create({
   },
   bookImage: {
     width: 90,
-    height: 110,
+    height: 150,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  koalaPlaceholder: {
+    width: 100,
+    height: 120,
     borderRadius: 8,
     marginRight: 15,
   },
