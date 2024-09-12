@@ -12,7 +12,8 @@ import { useUser, useAuth } from "@clerk/clerk-expo";
 import ProgressChart from "../../components/ProgressChart";
 import { useActiveBook } from "../../context/ActiveBookContext";
 import { COLORS } from "../../styles/constants";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import koalaPlaceholder from "../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
@@ -22,11 +23,48 @@ export default function ProfilePage() {
   const { activeBook, setActiveBook } = useActiveBook();
   const { getToken } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [currentPage, setCurrentPage] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [data, setData] = useState([]);
 
-  const currentDisplayedPage = activeBook?.currentPage || 0;
   const pageCount = activeBook?.pageCount || 0;
-  const progressPercentage = (currentDisplayedPage / pageCount) * 100;
+  const progressPercentage = (currentPage / pageCount) * 100;
+  const isbn = activeBook?.isbn;
+
+  const fetchProgressData = async () => {
+    try {
+      const token = await getToken();
+      const response = await fetch(`${API}/${isbn}/progress`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error retrieving data:", errorText);
+        return;
+      }
+
+      const result = await response.json();
+      // console.log(result);
+      setCurrentPage(result.currentPage);
+      const weekProgress = result.currentWeekProgress.map((entry) => ({
+        day: entry.weekday,
+        pages: entry.pagesRead,
+      }));
+      setData(weekProgress);
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Daten:", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isbn) {
+        fetchProgressData();
+      }
+    }, [isbn, currentPage, pageCount])
+  );
 
   const updatePages = async () => {
     try {
@@ -61,6 +99,7 @@ export default function ProfilePage() {
   return (
     <>
       <Text>Hello {user?.primaryEmailAddress?.emailAddress}</Text>
+
       <Text style={globalStyles.heading}>My Reading Progress</Text>
       {activeBook ? (
         <View style={styles.activeBookContainer}>
@@ -79,7 +118,7 @@ export default function ProfilePage() {
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle}>{activeBook.title}</Text>
             <Text style={styles.bookPages}>
-              Page: {currentDisplayedPage} /{activeBook.pageCount}
+              Page: {currentPage} /{activeBook.pageCount}
             </Text>
 
             <View style={styles.progressContainer}>
@@ -139,6 +178,7 @@ export default function ProfilePage() {
         isbn={activeBook?.isbn || "no-isbn"}
         currentPage={activeBook?.currentPage || 0}
         pageCount={activeBook?.pageCount || 1}
+        data={data}
       />
     </>
   );
@@ -277,3 +317,42 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+// const fetchProgressData = async () => {
+//   try {
+//     const token = await getToken();
+
+//     const response = await fetch(`${API}/${isbn}/progress`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error("Error retrieving data:", errorText);
+//       return;
+//     }
+
+//     const result = await response.json();
+//     const weekProgress = result.currentWeekProgress.map((entry) => ({
+//       day: entry.weekday,
+//       pages: entry.pagesRead,
+//     }));
+//     setData(weekProgress);
+//   } catch (error) {
+//     console.error("Fehler beim Abrufen der Daten:", error);
+//   }
+// };
+
+// const progressPercentage = (currentPage / pageCount) * 100;
+
+// useEffect(() => {
+//   if (isbn) {
+//     fetchProgressData();
+//   }
+// }, [isbn]);
+
+// useEffect(() => {
+//   fetchProgressData();
+// }, [currentPage, pageCount]);

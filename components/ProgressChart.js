@@ -7,49 +7,9 @@ import { useAuth } from "@clerk/clerk-expo";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
-const ProgressChart = ({ isbn, currentPage, pageCount }) => {
+const ProgressChart = ({ data = [] }) => {
   const { getToken } = useAuth();
-  const [data, setData] = useState([]);
   const maxBarHeight = 150;
-
-  const fetchProgressData = async () => {
-    try {
-      const token = await getToken();
-
-      const response = await fetch(`${API}/${isbn}/progress`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error retrieving data:", errorText);
-        return;
-      }
-
-      const result = await response.json();
-      const weekProgress = result.currentWeekProgress.map((entry) => ({
-        day: entry.weekday,
-        pages: entry.pagesRead,
-      }));
-      setData(weekProgress);
-    } catch (error) {
-      console.error("Fehler beim Abrufen der Daten:", error);
-    }
-  };
-
-  const progressPercentage = (currentPage / pageCount) * 100;
-
-  useEffect(() => {
-    if (isbn) {
-      fetchProgressData();
-    }
-  }, [isbn]);
-
-  useEffect(() => {
-    fetchProgressData();
-  }, [currentPage, pageCount]);
 
   const maxPages = Math.max(...data.map((entry) => entry.pages), 1);
 
