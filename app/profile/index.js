@@ -24,6 +24,7 @@ export default function ProfilePage() {
   const { getToken } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [enteredPage, setEnteredPage] = useState("");
   const [data, setData] = useState([]);
 
   const pageCount = activeBook?.pageCount || 0;
@@ -78,7 +79,7 @@ export default function ProfilePage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          newPage: parseInt(currentPage, 10),
+          newPage: parseInt(enteredPage, 10),
         }),
       });
       if (response.ok) {
@@ -154,8 +155,8 @@ export default function ProfilePage() {
               style={styles.input}
               placeholder="Current Page"
               keyboardType="numeric"
-              value={currentPage}
-              onChangeText={(text) => setCurrentPage(text)}
+              value={enteredPage}
+              onChangeText={(text) => setEnteredPage(text)}
             />
 
             <View style={styles.modalButtons}>
