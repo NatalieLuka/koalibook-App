@@ -1,4 +1,4 @@
-import { FlatList, View, Text, Pressable, Alert } from "react-native";
+import { FlatList, View, Text, Pressable, Alert, Image } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
 import { useAuth } from "@clerk/clerk-expo";
@@ -6,6 +6,8 @@ import { useState, useCallback } from "react";
 import { COLORS } from "../../styles/constants";
 import { router } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useActiveBook } from "../../context/ActiveBookContext";
+import koalaPlaceholder from "../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
@@ -30,37 +32,11 @@ const removeBookFromList = async (isbn, setBooks, getToken) => {
   }
 };
 
-const renderItem = ({ item, setBooks, getToken }) => {
-  return (
-    <View style={globalStyles.card}>
-      <Text style={globalStyles.cardTitle}>{item.title}</Text>
-      <Text style={globalStyles.cardAuthor}>by {item.author}</Text>
-      <Pressable
-        onPress={() => router.push(`/books/${item.isbn}`)}
-        style={({ pressed }) => [
-          globalStyles.button,
-          { backgroundColor: pressed ? COLORS.primary : COLORS.secondary },
-        ]}
-      >
-        <Text style={globalStyles.buttonText}>View Details</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => removeBookFromList(item.isbn, setBooks, getToken)}
-        style={({ pressed }) => [
-          globalStyles.button,
-          { backgroundColor: pressed ? COLORS.primary : COLORS.error },
-        ]}
-      >
-        <Text style={globalStyles.buttonText}>Remove Book</Text>
-      </Pressable>
-    </View>
-  );
-};
-
 export default function BooksPage() {
   const { getToken } = useAuth();
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { setActiveBook } = useActiveBook();
 
   useFocusEffect(
     useCallback(() => {
@@ -90,10 +66,69 @@ export default function BooksPage() {
     }, [getToken])
   );
 
+  const renderItem = ({ item, setBooks, getToken }) => {
+    return (
+      <View style={globalStyles.card}>
+        <Image
+          style={
+            item.image !== "22" && item.image
+              ? globalStyles.cardImage
+              : globalStyles.koalaPlaceholder
+          }
+          source={
+            item.image !== "22" && item.image
+              ? { uri: item.image }
+              : koalaPlaceholder
+          }
+        />
+        <View style={globalStyles.cardButtonContainer}>
+          <Pressable
+            onPress={() => router.push(`/books/${item.isbn}`)}
+            style={({ pressed }) => [
+              globalStyles.button,
+              { backgroundColor: pressed ? COLORS.primary : COLORS.secondary },
+            ]}
+          >
+            <Text style={globalStyles.buttonText}>View Details</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              router.push("/profile"), setActiveBook(item);
+            }}
+            style={({ pressed }) => [
+              globalStyles.button,
+              { backgroundColor: pressed ? COLORS.primary : COLORS.secondary },
+            ]}
+          >
+            <Text style={globalStyles.buttonText}>Set as Active</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => removeBookFromList(item.isbn, setBooks, getToken)}
+            style={({ pressed }) => [
+              globalStyles.button,
+              {
+                backgroundColor: pressed ? COLORS.secondary : COLORS.background,
+                borderWidth: 1,
+                borderColor: "white",
+              },
+            ]}
+          >
+            <Text
+              style={[globalStyles.buttonText, { color: COLORS.paragraphDark }]}
+            >
+              Remove Book
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <Text style={globalStyles.heading}>Books Page 📚</Text>
+        <Text style={globalStyles.heading}>My Bookshelf📚</Text>
 
         <Pressable
           onPress={() => router.push("/books/scanner")}
