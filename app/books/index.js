@@ -22,13 +22,13 @@ const removeBookFromList = async (isbn, setBooks, getToken) => {
       },
     });
     if (deleteResponse.ok) {
-      Alert.alert("Success", "Book removed from your list.");
+      Alert.alert("Book removed from your list.");
     } else {
-      Alert.alert("Error", "Failed to remove book from your list.");
+      Alert.alert("Failed to remove book from your list.");
     }
   } catch (error) {
     console.log(error);
-    Alert.alert("Error", "An error occurred while removing the book.");
+    Alert.alert("An error occurred while removing the book.");
   }
 };
 
