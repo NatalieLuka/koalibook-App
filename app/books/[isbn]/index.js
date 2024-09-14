@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     gap: 10,
   },
+
   image: {
     height: 250,
     width: 150,

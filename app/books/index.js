@@ -1,4 +1,4 @@
-import { FlatList, View, Text, Pressable, Alert } from "react-native";
+import { FlatList, View, Text, Pressable, Alert, Image } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { globalStyles } from "../../styles/globalStyles";
 import { useAuth } from "@clerk/clerk-expo";
@@ -7,6 +7,7 @@ import { COLORS } from "../../styles/constants";
 import { router } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useActiveBook } from "../../context/ActiveBookContext";
+import koalaPlaceholder from "../../assets/noBookImage.png";
 
 const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
@@ -68,8 +69,18 @@ export default function BooksPage() {
   const renderItem = ({ item, setBooks, getToken }) => {
     return (
       <View style={globalStyles.card}>
-        <Text style={globalStyles.cardTitle}>{item.title}</Text>
-        <Text style={globalStyles.cardAuthor}>by {item.author}</Text>
+        <Image
+          style={
+            item.image !== "22" && item.image
+              ? globalStyles.cardImage
+              : globalStyles.koalaPlaceholder
+          }
+          source={
+            item.image !== "22" && item.image
+              ? { uri: item.image }
+              : koalaPlaceholder
+          }
+        />
         <View style={globalStyles.cardButtonContainer}>
           <Pressable
             onPress={() => router.push(`/books/${item.isbn}`)}
@@ -117,7 +128,7 @@ export default function BooksPage() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <Text style={globalStyles.heading}>Books Page 📚</Text>
+        <Text style={globalStyles.heading}>My Bookshelf📚</Text>
 
         <Pressable
           onPress={() => router.push("/books/scanner")}

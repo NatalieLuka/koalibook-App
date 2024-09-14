@@ -1,12 +1,11 @@
 import { Pressable, StyleSheet, Text, View, Alert, Modal } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState } from "react";
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { useAuth } from "@clerk/clerk-expo";
 import { globalStyles } from "../../../styles/globalStyles";
 import { COLORS } from "../../../styles/constants";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Image } from "expo-image";
 import koalaPlaceholder from "../../../assets/noBookImage.png";
 
 const BooksAPI = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
@@ -17,7 +16,6 @@ export default function CameraPage() {
   const [activeScanner, setActiveScanner] = useState(true);
   const [permission, requestPermission] = useCameraPermissions();
   const [isbn, setIsbn] = useState("N/A");
-  const { user } = useUser();
   const { getToken } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [bookInfo, setBookInfo] = useState(null);
@@ -28,25 +26,13 @@ export default function CameraPage() {
     try {
       const url = `${BooksAPI}${isbn}`;
       const response = await fetch(url);
-      console.log(
-        "static url:",
-        "https://www.googleapis.com/books/v1/volumes?q=isbn:9783551585394"
-      );
-      console.log("url:", url);
       const data = await response.json();
 
       if (data.items && data.items.length > 0) {
         const selfLink = data.items[0].selfLink;
-        console.log(
-          "static selflink:",
-          "https://www.googleapis.com/books/v1/volumes/bgjtEAAAQBAJ"
-        );
-        console.log("selfLink:", selfLink);
         if (selfLink) {
           const selfLinkResponse = await fetch(selfLink);
           const selfLinkData = await selfLinkResponse.json();
-          console.log("------------------");
-          console.log("selfLinkData: ", JSON.stringify(selfLinkData, null, 2));
           const bookData = {
             title: data.items[0].volumeInfo.title,
             author: data.items[0].volumeInfo.authors.join(", "),
@@ -61,9 +47,6 @@ export default function CameraPage() {
           if (selfLinkData.volumeInfo.imageLinks?.thumbnail) {
             bookData.image = selfLinkData.volumeInfo.imageLinks.thumbnail;
           }
-
-          console.log("data: ", JSON.stringify(data, null, 2));
-          console.log("bookData: ", JSON.stringify(bookData, null, 2));
           setBookInfo(bookData);
           setModalVisible(true);
         }
@@ -71,7 +54,6 @@ export default function CameraPage() {
         Alert.alert("Book not found", "No book found with the provided ISBN.");
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to fetch book information.");
       console.log(error);
     } finally {
       setLoading(false);
@@ -90,10 +72,9 @@ export default function CameraPage() {
       body: JSON.stringify(bookData),
     });
 
-    const addBookJson = await addBookResponse.json(); // parsed aus dem body das JSON
-    console.log(addBookJson);
+    const addBookJson = await addBookResponse.json();
     if (addBookResponse.ok) {
-      Alert.alert("Success", "Book added to your list successfully.");
+      Alert.alert("Book added to your list successfully.");
     } else {
       Alert.alert("Error", "Failed to add book to your list.");
     }
@@ -131,10 +112,9 @@ export default function CameraPage() {
           style={styles.camera}
           facing={cameraFacing}
         />
-        <Text>ISBN: {isbn}</Text>
         <Pressable
           style={({ pressed }) => [
-            globalStyles.button,
+            styles.button,
             {
               backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
             },
@@ -143,19 +123,19 @@ export default function CameraPage() {
             setCameraFacing((prev) => (prev === "front" ? "back" : "front"));
           }}
         >
-          <Text style={globalStyles.buttonText}>Flip Camera</Text>
+          <Text style={styles.buttonText}>Flip Camera</Text>
         </Pressable>
 
         <Pressable
           style={({ pressed }) => [
-            globalStyles.button,
+            styles.button,
             {
               backgroundColor: pressed ? COLORS.primary : COLORS.secondary,
             },
           ]}
           onPress={() => setActiveScanner(true)}
         >
-          <Text style={globalStyles.buttonText}>Scan again</Text>
+          <Text style={styles.buttonText}>Scan again</Text>
         </Pressable>
         <Modal
           animationType="slide"
@@ -165,35 +145,37 @@ export default function CameraPage() {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.modalView}>
-            {bookInfo && (
-              <>
-                <Text style={styles.modalText}>Title: {bookInfo.title}</Text>
-                <Text style={styles.modalText}>Author: {bookInfo.author}</Text>
-                {/* <Text style={styles.modalText}>
-                  Textsnippet: {bookInfo.textSnippet}
-                </Text> */}
-                <Pressable
-                  style={[globalStyles.button, styles.buttonClose]}
-                  onPress={() => {
-                    addBookToList(bookInfo);
-                    setModalVisible(false);
-                    Alert.alert(
-                      "Book Added",
-                      "This book has been added to your list!"
-                    );
-                  }}
-                >
-                  <Text style={globalStyles.buttonText}>Add to List</Text>
-                </Pressable>
-              </>
-            )}
-            <Pressable
-              style={[globalStyles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={globalStyles.buttonText}>Close</Text>
-            </Pressable>
+          <View style={globalStyles.modalContainer}>
+            <View style={globalStyles.modalContent}>
+              {bookInfo && (
+                <>
+                  <Text style={globalStyles.modalTitle}>{bookInfo.title}</Text>
+                  <Text style={globalStyles.modalSubtitle}>
+                    by {bookInfo.author}
+                  </Text>
+                  <View style={globalStyles.modalButtons}>
+                    <Pressable
+                      style={globalStyles.modalButton}
+                      onPress={() => {
+                        addBookToList(bookInfo);
+                        setModalVisible(false);
+                      }}
+                    >
+                      <Text style={globalStyles.modalButtonText}>
+                        Add to List
+                      </Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={globalStyles.modalButtonCancel}
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <Text style={globalStyles.modalButtonText}>Close</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
+            </View>
           </View>
         </Modal>
 
@@ -215,26 +197,19 @@ const styles = StyleSheet.create({
     width: "80%",
     height: "50%",
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  buttonClose: {
+
+  button: {
     backgroundColor: COLORS.secondary,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

@@ -72,7 +72,7 @@ function TabNavigation() {
         name="books"
         options={{
           href: user ? "/books" : null,
-          title: "My Books",
+          title: "Bookshelf",
           tabBarIcon: ({ color }) => {
             return <FontAwesome5 name="book-open" size={24} color={color} />;
           },

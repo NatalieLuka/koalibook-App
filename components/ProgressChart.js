@@ -1,14 +1,8 @@
-import React, { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { COLORS } from "../styles/constants";
 import climbingKoala from "../assets/climbingKoala.png";
-import { useEffect } from "react";
-import { useAuth } from "@clerk/clerk-expo";
-
-const API = `${process.env.EXPO_PUBLIC_API_URL}/books`;
 
 const ProgressChart = ({ data = [] }) => {
-  const { getToken } = useAuth();
   const maxBarHeight = 150;
 
   const maxPages = Math.max(...data.map((entry) => entry.pages), 1);
@@ -55,32 +49,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: COLORS.paragraphLight,
-    borderWidth: 1,
-    borderRadius: 5,
-    marginRight: 10,
-    paddingLeft: 8,
-    width: 100,
-    color: COLORS.paragraphLight,
-  },
-
-  picker: {
-    width: "50%",
-    marginRight: 10,
-  },
-  item: {
-    height: 50,
-    fontSize: 16,
-    color: COLORS.paragraphLight,
-  },
-
   chartContainer: {
     flexDirection: "row",
     justifyContent: "space-between",

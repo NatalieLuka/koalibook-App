@@ -30,6 +30,12 @@ export default function BooksStack() {
           title: "Book Details",
         }}
       />
+      <Stack.Screen
+        name="scanner/index"
+        options={{
+          title: "Scanner",
+        }}
+      />
     </Stack>
   );
 }

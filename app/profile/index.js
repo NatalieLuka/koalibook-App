@@ -47,7 +47,6 @@ export default function ProfilePage() {
       }
 
       const result = await response.json();
-      // console.log(result);
       setCurrentPage(result.currentPage);
       const weekProgress = result.currentWeekProgress.map((entry) => ({
         day: entry.weekday,
@@ -55,7 +54,7 @@ export default function ProfilePage() {
       }));
       setData(weekProgress);
     } catch (error) {
-      console.error("Fehler beim Abrufen der Daten:", error);
+      console.error("Error retrieving data:", error);
     }
   };
 
@@ -90,10 +89,10 @@ export default function ProfilePage() {
         setCurrentPage("");
         setModalVisible(false);
       } else {
-        Alert.alert("Fehler: Die Daten konnten nicht aktualisiert werden.");
+        Alert.alert("Error: data could not be updated");
       }
     } catch (error) {
-      console.error("Fehler beim Senden der Daten:", error);
+      console.error("Error sending data:", error);
     }
   };
 
@@ -139,7 +138,7 @@ export default function ProfilePage() {
           </View>
         </View>
       ) : (
-        <Text style={styles.noBook}>Kein aktives Buch ausgewählt.</Text>
+        <Text style={styles.noBook}>No active book selected.</Text>
       )}
       <Modal
         animationType="slide"
@@ -147,28 +146,28 @@ export default function ProfilePage() {
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Current Page</Text>
+        <View style={globalStyles.modalContainer}>
+          <View style={globalStyles.modalContent}>
+            <Text style={globalStyles.modalTitle}>Current Page</Text>
 
             <TextInput
-              style={styles.input}
+              style={globalStyles.input}
               placeholder="Current Page"
               keyboardType="numeric"
               value={enteredPage}
               onChangeText={(text) => setEnteredPage(text)}
             />
 
-            <View style={styles.modalButtons}>
-              <Pressable style={styles.modalButton} onPress={updatePages}>
-                <Text style={styles.modalButtonText}>Update</Text>
+            <View style={globalStyles.modalButtons}>
+              <Pressable style={globalStyles.modalButton} onPress={updatePages}>
+                <Text style={globalStyles.modalButtonText}>Update</Text>
               </Pressable>
 
               <Pressable
-                style={styles.modalButtonCancel}
+                style={globalStyles.modalButtonCancel}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.modalButtonText}>Cancel</Text>
+                <Text style={globalStyles.modalButtonText}>Cancel</Text>
               </Pressable>
             </View>
           </View>
@@ -266,94 +265,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     margin: 75,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: "#FFF9E8", // light ivory
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    marginBottom: 15,
-    fontWeight: "bold",
-    color: "#683508", // paragraphDark
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#364D38", // secondary
-    borderRadius: 5,
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  modalButton: {
-    backgroundColor: "#364D38", // secondary color
-    padding: 10,
-    borderRadius: 5,
-    width: "45%",
-    alignItems: "center",
-  },
-  modalButtonCancel: {
-    backgroundColor: "#ad0009", // error color
-    padding: 10,
-    borderRadius: 5,
-    width: "45%",
-    alignItems: "center",
-  },
-  modalButtonText: {
-    color: "#FFF9E8", // light ivory
-    fontWeight: "bold",
-  },
 });
-
-// const fetchProgressData = async () => {
-//   try {
-//     const token = await getToken();
-
-//     const response = await fetch(`${API}/${isbn}/progress`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       console.error("Error retrieving data:", errorText);
-//       return;
-//     }
-
-//     const result = await response.json();
-//     const weekProgress = result.currentWeekProgress.map((entry) => ({
-//       day: entry.weekday,
-//       pages: entry.pagesRead,
-//     }));
-//     setData(weekProgress);
-//   } catch (error) {
-//     console.error("Fehler beim Abrufen der Daten:", error);
-//   }
-// };
-
-// const progressPercentage = (currentPage / pageCount) * 100;
-
-// useEffect(() => {
-//   if (isbn) {
-//     fetchProgressData();
-//   }
-// }, [isbn]);
-
-// useEffect(() => {
-//   fetchProgressData();
-// }, [currentPage, pageCount]);
