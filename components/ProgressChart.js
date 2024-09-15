@@ -63,17 +63,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   bar: {
-    width: 30,
+    width: 25,
     backgroundColor: COLORS.primary,
     marginBottom: 5,
     position: "relative",
+    borderRadius: 8,
   },
   icon: {
     width: 30,
     height: 40,
     position: "absolute",
     left: "50%",
-    transform: [{ translateY: 20 }, { translateX: 10 }],
+    transform: [{ translateY: 20 }, { translateX: 8 }],
   },
 });
 export default ProgressChart;

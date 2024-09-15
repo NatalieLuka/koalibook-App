@@ -26,6 +26,7 @@ export default function ProfilePage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [enteredPage, setEnteredPage] = useState("");
   const [data, setData] = useState([]);
+  const [totals, setTotals] = useState([]);
 
   const pageCount = activeBook?.pageCount || 0;
   const progressPercentage = (currentPage / pageCount) * 100;
@@ -53,6 +54,11 @@ export default function ProfilePage() {
         pages: entry.pagesRead,
       }));
       setData(weekProgress);
+      const totalProgress = result.totals.map((entry) => ({
+        day: entry.weekday,
+        pages: entry.pagesRead,
+      }));
+      setTotals(totalProgress);
     } catch (error) {
       console.error("Error retrieving data:", error);
     }
@@ -174,12 +180,7 @@ export default function ProfilePage() {
         </View>
       </Modal>
 
-      <ProgressChart
-        isbn={activeBook?.isbn || "no-isbn"}
-        currentPage={activeBook?.currentPage || 0}
-        pageCount={activeBook?.pageCount || 1}
-        data={data}
-      />
+      <ProgressChart data={totals} />
     </>
   );
 }
