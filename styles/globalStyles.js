@@ -53,7 +53,7 @@ export const globalStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
-    flexDirection: "row", // Flexbox-Reihenanordnung, um Bild und Inhalt nebeneinander zu platzieren
+    flexDirection: "row",
     alignItems: "center",
   },
   // cardTitle: {
